@@ -17,8 +17,18 @@ imports = [
 
 beat_schedule = {
     "update_vm_assets": {
-        "task": "",
+        "task": "xxx",
         "schedule": crontab(hour="*/1"),
         "args": ()
-    }
+    },
+    "get_cookies": {
+        "task": "xxx",
+        "schedule": crontab(day_of_week="0-6"),
+        "args": ()
+    },
+    "check_cookies": {
+        "task": "xxx",
+        "schedule": crontab(day_of_week="0-6"),
+        "args": ()
+    },
 }
