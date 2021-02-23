@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-from logging import config as logging_config
+import logging.config
 import os
 from pathlib import Path
 import sys
@@ -23,8 +23,10 @@ csv_files_path = os.path.join(BASE_DIR, "csv_files")
 log_path = os.path.join(BASE_DIR, "logs")
 if not os.path.exists(log_path):
     os.mkdir(log_path)
+logging.config.fileConfig(os.path.join(BASE_DIR, 'conf\\logging.ini'))
 
 sys.path.insert(0, os.path.join(BASE_DIR, "apps"))
+sys.path.insert(0, os.path.join(BASE_DIR, "celery_tasks"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
@@ -48,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_celery_beat',
     'rest_framework',
-    'django_filter',
+    'django_filters',
     'crispy_forms',
 ]
 
@@ -89,10 +91,10 @@ WSGI_APPLICATION = 'project_monitor.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
+        'NAME': 'celery_tasks',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': '127.0.0.1',
     }
 }
 
@@ -134,79 +136,6 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ),
 }
-
-# logging setting
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'formatters': {
-        'standard': {
-            'format': '%(asctime)s - %(module)s - %(funcName)s - %(levelname)s : %(message )s'
-        },
-        # 'simple': {
-        #     'format': '%(levelname)s %(message)s'
-        # },
-    },
-    'handlers': {
-        # project info
-        'default': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            # 'filename': os.path.join(log_path, 'info-{}.log'.format(time.strftime('%Y-%m-%d'))),
-            'filename': os.path.join(log_path, 'info.log'),
-            'maxBytes': 1024 * 1024 * 30,
-            'backupCount': 7,
-            'formatter': 'standard',
-            'encoding': 'utf-8',
-        },
-        # project error
-        'error': {
-            'level': 'ERROR',
-            'class': 'logging.handlers.RotatingFileHandler',
-            # 'filename': os.path.join(log_path, 'error-{}.log'.format(time.strftime('%Y-%m-%d'))),
-            'filename': os.path.join(log_path, 'error.log'),
-            'maxBytes': 1024 * 1024 * 30,
-            'backupCount': 7,
-            'formatter': 'standard',
-            'encoding': 'utf-8',
-        },
-        # celery info
-        'celery_info': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(log_path, 'celery_info.log'),
-            'maxBytes': 1024 * 1024 * 10,
-            'backupCount': 7,
-            'formatter': 'standard',
-            'encoding': 'utf-8',
-        },
-        # celery error
-        'celery_error': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(log_path, 'celery_info.log'),
-            'maxBytes': 1024 * 1024 * 10,
-            'backupCount': 7,
-            'formatter': 'standard',
-            'encoding': 'utf-8',
-        },
-    },
-    'loggers': {
-        # 工程日志
-        'django': {
-            'handlers': ['info', 'error'],
-            'level': 'INFO',
-            'propagate': False
-        },
-        # log调用时传入参数：celery，区分celery定时任务和异步任务日志
-        'log': {
-            'handlers': ['celery_info', 'celery_error'],
-            'level': 'INFO',
-            'propagate': True
-        },
-    }
-}
-logging_config.dictConfig(LOGGING)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
