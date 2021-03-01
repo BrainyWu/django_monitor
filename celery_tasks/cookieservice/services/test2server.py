@@ -9,7 +9,7 @@ class Test2LoginService(BaseService):
     name = "test2"
 
     def __init__(self, settings):
-        # 从对应服务中随机选中一个user
+        super(Test2LoginService, self).__init__(settings)
         self.username = random.choice(settings[self.name]["users"])["username"]
         self.password = random.choice(settings[self.name]["users"])["password"]
 
