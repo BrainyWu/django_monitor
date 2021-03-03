@@ -1,29 +1,14 @@
 # -*- coding: utf-8 -*-
 __author__ = 'wuhai'
+from celery import shared_task
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from functools import partial
 
-from celery_tasks import celery_app, logger
-from cookieservice.settings import COOKIE_SERVICES
-from cookieservice.server import CookieServer
-from lib.mysqldatabase import DatabasePoolView
-
-dbpool = DatabasePoolView()
-cookie_srv = CookieServer(COOKIE_SERVICES)
-
-
-@celery_app.task
-def update_vm_assets():
-    pass
-
-
-@celery_app.task
-def update_phy_assets():
-    pass
+from cookieservice.server import cookie_srv
 
 
 # 模拟登陆，获取cookie数据到redis中
-@celery_app
+@shared_task
 def get_cookies():
     task_list = []
     login_executor = ThreadPoolExecutor(max_workers=5)
@@ -36,7 +21,7 @@ def get_cookies():
     #     print(data)
 
 
-@celery_app
+@shared_task
 def check_cookies():
     task_list = []
     check_executor = ThreadPoolExecutor(max_workers=5)

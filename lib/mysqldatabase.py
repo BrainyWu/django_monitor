@@ -175,5 +175,8 @@ class DatabasePoolView:
         logger.info("Delete %s.%s expire data success." % (self.db, table))
 
 
+dbpool = DatabasePoolView()
+
+
 if __name__ == '__main__':
     pass

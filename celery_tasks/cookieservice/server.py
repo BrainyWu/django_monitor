@@ -4,6 +4,7 @@ import json
 
 from django_redis import get_redis_connection
 
+from .settings import COOKIE_SERVICES
 from celery_tasks import logger
 
 
@@ -41,6 +42,8 @@ class CookieServer:
         expire_time = self.cookie_services[srv_name]["expiry"]
         self.redis_cli.expire(self.cookie_services[srv_name]["cookie_key"], expire_time)
 
+
+cookie_srv = CookieServer(COOKIE_SERVICES)
 
 if __name__ == '__main__':
     pass

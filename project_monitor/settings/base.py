@@ -36,11 +36,10 @@ SECRET_KEY = 'dqk=gc^4bq-0x=i%0)v4hw0-ock0e=pe0#6$64x9*)o(9xd9$b'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 ALLOWED_HOSTS = []
+ROOT_URLCONF = 'project_monitor.urls'
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -64,8 +63,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'project_monitor.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -85,9 +82,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project_monitor.wsgi.application'
 
+# CELERY SETTINGS
+# broker 配置
+CELERY_BROKER_URL = 'redis://localhost:6379/5'
+# 结果保存配置
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/6'
+CELERY_RESULT_EXPIRES = 60 * 60 * 12
+CELERY_MAX_TASKS_PRE_CHILD = 10
+# 序列化相关配置
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Asia/Shanghai'
+from project_monitor.taskschedulers import beat_schedulers
+CELERYBEAT_SCHEDULE = beat_schedulers
+
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
